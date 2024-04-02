@@ -99,7 +99,7 @@ def convert_vcf_to_bed(vcf, bed_path):
     )
 
 
-def run_oneliner(bed_path, reference, input_asm):
+def run_oneliner(bed_path, reference, input_asm, minimap_preset):
     """
     Run a minimap2 + samtools oneliner to generate a pileup from an input assembly
 
@@ -120,7 +120,7 @@ def run_oneliner(bed_path, reference, input_asm):
     # run minimap2, pipe to samtools view, samtools sort and samtools mpileup
     # return stdout as text string
     minimap2 = subprocess.Popen(
-        ["minimap2", "-ax", "asm5", reference, input_asm],
+        ["minimap2", "-ax", minimap_preset, reference, input_asm],
         stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
     )
@@ -203,24 +203,6 @@ def parse_mpileup_output(mpileup_output, vcf, sample):
         data, left_on="POS", right_on="POS", how="left", suffixes=("_ref", "_obs")
     )
 
-    # variants_missing = sum(merged["ALT_obs"] == "*") # zero cov or deletion
-    # variants_multiple_cov = sum(merged["DEPTH"] > 1) # cov >1: possible duplication
-    # variants_in_scheme = len(merged) # total variants in reference vcf
-    # matching_variants = sum(merged["ALT_ref"].str.upper() == merged["ALT_obs"].str.upper()) # variants matching type of interest
-    # wt_variants = sum(
-    #     (merged["DEPTH"] == 1)
-    #     & ((merged["ALT_obs"] == ".") | (merged["ALT_obs"] == ","))
-    # ) # valid (DP==1) variants that are wildtype (ALT==. or ,)
-
-    # print(
-    #     sample,
-    #     matching_variants,
-    #     wt_variants,
-    #     variants_in_scheme,
-    #     variants_missing,
-    #     variants_multiple_cov,
-    #     sep="\t",
-    # )
     output = {}
     output["variants_missing"] = sum(merged["ALT_obs"] == "*")  # zero cov or deletion
     output["variants_multiple_cov"] = sum(
@@ -256,7 +238,7 @@ def wrapper(args_dict):
     """
     sample = Path(args_dict["input_asm"]).stem
     result = run_oneliner(
-        args_dict["bed_path"], args_dict["reference"], args_dict["input_asm"]
+        args_dict["bed_path"], args_dict["reference"], args_dict["input_asm"], args_dict["minimap_preset"]
     )
     output = parse_mpileup_output(result, args_dict["vcf"], sample)
     logging.info(f"Processed {sample}")
@@ -264,7 +246,7 @@ def wrapper(args_dict):
     return output
 
 
-def run_parallel(bed_path, reference, list_input, vcf, num_processes):
+def run_parallel(bed_path, reference, list_input, vcf, minimap_preset, num_processes):
     """
     Run the typing workflow in parallel on multiple input assemblies
 
@@ -292,6 +274,7 @@ def run_parallel(bed_path, reference, list_input, vcf, num_processes):
             "reference": reference,
             "input_asm": input_asm,
             "vcf": vcf,
+            "minimap_preset": minimap_preset,
         }
         for input_asm in list_input
     ]
@@ -365,6 +348,10 @@ def main():
         datefmt="[%Y-%m-%d %H:%M:%S]",
     )
 
+    # Not exposed in CLI yet, needs testing
+    minimap_preset = "asm5"
+    logging.info(f"Using minimap2 preset: {minimap_preset}")
+
     # check non-python dependencies
     logging.info("Checking external dependencies")
     check_external_dependencies()
@@ -386,7 +373,7 @@ def main():
     logging.info(f"Created temporary bed file: {bed_path}")
 
     logging.info("Starting typing workflow")
-    run_parallel(bed_path, args.reference, list_input, args.vcf, args.processes)
+    run_parallel(bed_path, args.reference, list_input, args.vcf, minimap_preset, args.processes)
 
 
 if __name__ == "__main__":
