@@ -15,9 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Conda environment with Micromamba
-        uses: mamba-org/provision-with-micromamba@main
+        uses: mamba-org/setup-micromamba@v1
         with:
-          cache-downloads: true
+          cache-environment: true
           environment-file: env.yaml
       - name: Conda list
         shell: bash -l {0}
