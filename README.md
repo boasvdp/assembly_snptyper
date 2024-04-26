@@ -32,6 +32,18 @@ assembly_snptyper --version
 Note that: 
 - the reference VCF must be based on the reference genome (i.e. identical chromosome names).
 - the list of input files must be a file list of paths to assemblies. This is to accomodate running the script on large numbers of files
+- the reference fasta must be unzipped
+
+### Example
+
+Running `assembly_snptyper` for *S. pyogenes* M1UK, with paths to genome assemblies listed in `fastas.txt`:
+
+```
+assembly_snptyper --vcf data/M1UK.vcf --reference data/MGAS5005.fa --list_input fastas.txt -p 4 --verbose > output.txt
+```
+
+
+## Help message
 
 ```
 assembly_snptyper --help

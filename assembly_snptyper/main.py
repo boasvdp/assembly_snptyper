@@ -63,6 +63,7 @@ def check_if_ref_is_ascii(reference):
             "Reference genome cannot be read as flat text: only unzipped FASTA reference genomes are supported."
         )
 
+
 def convert_vcf_to_bed(vcf, bed_path):
     """
     Convert reference VCF to BED file
@@ -264,7 +265,10 @@ def wrapper(args_dict):
     """
     sample = Path(args_dict["input_asm"]).stem
     result = run_oneliner(
-        args_dict["bed_path"], args_dict["reference"], args_dict["input_asm"], args_dict["minimap_preset"]
+        args_dict["bed_path"],
+        args_dict["reference"],
+        args_dict["input_asm"],
+        args_dict["minimap_preset"],
     )
     output = parse_mpileup_output(result, args_dict["vcf"], sample)
     logging.info(f"Processed {sample}")
@@ -404,7 +408,9 @@ def main():
     logging.info(f"Created temporary bed file: {bed_path}")
 
     logging.info("Starting typing workflow")
-    run_parallel(bed_path, args.reference, list_input, args.vcf, minimap_preset, args.processes)
+    run_parallel(
+        bed_path, args.reference, list_input, args.vcf, minimap_preset, args.processes
+    )
 
 
 if __name__ == "__main__":
