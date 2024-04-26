@@ -37,6 +37,32 @@ def check_external_dependencies():
         raise FileNotFoundError("samtools not found in PATH")
 
 
+def check_if_ref_is_ascii(reference):
+    """
+    Check if reference genome is ASCII encoded
+
+    Parameters
+    ----------
+    reference : Path
+        Path to reference genome
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    UnicodeDecodeError
+        If reference genome is not ASCII encoded
+    """
+    try:
+        with open(reference, "r") as f:
+            f.read()
+    except UnicodeDecodeError:
+        raise ValueError(
+            "Reference genome cannot be read as flat text: only unzipped FASTA reference genomes are supported."
+        )
+
 def convert_vcf_to_bed(vcf, bed_path):
     """
     Convert reference VCF to BED file
@@ -356,6 +382,11 @@ def main():
     logging.info("Checking external dependencies")
     check_external_dependencies()
     logging.info("External dependencies found")
+
+    # check if reference genome is ASCII encoded
+    logging.info("Checking if reference genome is ASCII encoded")
+    check_if_ref_is_ascii(args.reference)
+    logging.info("Reference genome is ASCII encoded")
 
     # read list of input assemblies
     logging.info(f"Reading list of input assemblies from {args.list_input}")
