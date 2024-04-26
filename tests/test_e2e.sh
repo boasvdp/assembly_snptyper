@@ -25,7 +25,7 @@ python -m pip install .
 assembly_snptyper \
     --list_input "$TEST_DATA_DIR"/test_genomes.txt \
     --vcf data/M1UK.vcf \
-    --reference "$TEST_DATA_DIR"/MGAS5005.fa \
+    --reference data/MGAS5005.fa \
     -p 2 > "$TEST_DATA_DIR"/test_output.txt
 
 # Check the output
