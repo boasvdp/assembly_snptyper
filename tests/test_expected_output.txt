@@ -1,0 +1,3 @@
+sample	matching_variants	wt_variants	variants_in_scheme	variants_missing	variants_multiple_cov
+GCA_034818825.1_PDT001921168.1_genomic	27	0	27	0	0
+GCA_034822885.1_PDT001920952.1_genomic	0	27	27	0	0
