@@ -29,6 +29,6 @@ assembly_snptyper \
     -p 2 > "$TEST_DATA_DIR"/test_output.txt
 
 # Check the output
-cmp "$TEST_DATA_DIR"/test_output.txt tests/test_expected_output.txt
+cmp <(sort "$TEST_DATA_DIR"/test_output.txt) <(sort tests/test_expected_output.txt)
 
 rm -rf "$TEST_DATA_DIR"
