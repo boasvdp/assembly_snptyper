@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/boasvdp/assembly_snptyper/compare/v0.1.0...v0.1.1) (2024-07-01)
+
+
+### Bug Fixes
+
+* add license ([6f8d4d9](https://github.com/boasvdp/assembly_snptyper/commit/6f8d4d976386398a414bd8682993575b067dd098))
+
 ## 0.1.0 (2024-04-26)
 
 
